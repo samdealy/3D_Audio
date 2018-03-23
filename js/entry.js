@@ -1,127 +1,95 @@
 import * as THREE from 'three';
-var angle = 0;
+let scene, camera, renderer, materials, mesh;
 
-// const scene = new THREE.Scene();
-// const camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-//
-// // const renderer = new THREE.WebGLRenderer();
-// // renderer.setSize( window.innerWidth, window.innerHeight );
-// // document.body.appendChild( renderer.domElement );
-// //
-// // const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-// // const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-// // const cube = new THREE.Mesh( geometry, material );
-// // scene.add( cube );
-// //
-// // camera.position.z = 5;
-// //
-// // const animate = function () {
-// //   requestAnimationFrame( animate );
-// //
-// //   cube.rotation.x += 0.1;
-// //   cube.rotation.y += 0.1;
-// //
-// //   // renderer.render(scene, camera);
-// // };
-// //
-// // animate();
+  scene    = new THREE.Scene()
+  camera   = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight,.1, 1000)
+  renderer = new THREE.WebGLRenderer()
+  camera.position.x = 40
+  camera.position.y = 80;
+  camera.position.z = 80;
+  renderer.setClearColor(0xa300ff)
+  renderer.setSize(window.innerWidth, window.innerHeight)
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMapSoft = true
+  //GEOMETRY
+  var cubeGeo = new THREE.BoxGeometry(5,5,5)
+  var cubeMat = new THREE.MeshPhongMaterial({color: 'rgb(255,223,0)' })
+  // var cube    = new THREE.Mesh(cubeGeo, cubeMat)
+  // cube.castShadow = true;
+  // cube.position.y = 2.5;
+  var planeGeo = new THREE.PlaneGeometry(100,100,100)
+  var planeMat = new THREE.MeshLambertMaterial(0xffffff)
+  var plane = new THREE.Mesh(planeGeo,planeMat)
+  plane.rotation.x = -.5 * Math.PI
+  plane.receiveShadow = true;
 
-// const renderer = new THREE.WebGLRenderer();
-// renderer.setSize( window.innerWidth, window.innerHeight );
-// document.body.appendChild( renderer.domElement );
-//
-// const camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 500 );
-// camera.position.set( 0, 0, 100 );
-// camera.lookAt( new THREE.Vector3( 0, 0, 0 ) );
-//
-// const scene = new THREE.Scene();
-//
-// const material = new THREE.LineBasicMaterial({ color: 0x0000ff })
-// const geometry = new THREE.Geometry();
-// geometry.vertices.push(new THREE.Vector3(-10, 0, 0));
-// geometry.vertices.push(new THREE.Vector3( 0, 10, 0) );
-// geometry.vertices.push(new THREE.Vector3( 10, 0, 0) );
-//
-// const line = new THREE.Line(geometry, material);
-// scene.add( line );
-// renderer.render( scene, camera );
-//
-// const animate = () => {
-//   requestAnimationFrame( animate );
-//   line.rotation.x += 1;
-//   line.rotation.y += 1;
-// }
-
-// const loader = new THREE.FontLoader();
-//
-// loader.load( 'fonts/futura.typeface.json', function ( font ) {
-//
-// 	const geometry = new THREE.TextGeometry( 'Hello three.js!', {
-// 		font: font,
-// 		size: 80,
-// 		height: 5,
-// 		curveSegments: 12,
-// 		bevelEnabled: true,
-// 		bevelThickness: 10,
-// 		bevelSize: 8,
-// 		bevelSegments: 5
-// 	} );
-// } );
-
-var scene = new THREE.Scene();
-var camera = new THREE.PerspectiveCamera( 500, window.innerWidth/window.innerHeight, 0.1, 1000 );
-
-var renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-// add cube
-var geometry = new THREE.IcosahedronGeometry(20, 0);
-var color = new THREE.Color( "#32CD32" );
-var material = new THREE.MeshPhongMaterial( {color: color.getHex(), specular: 0x009900, shinyness: 20 } );
-var icosahedron = new THREE.Mesh( geometry, material );
-scene.add( icosahedron );
-
-
-// rotate cube
-icosahedron.rotation.x = 0.1;
-icosahedron.rotation.y = -0.25;
-
-camera.position.z = 100;
-
-var light = new THREE.PointLight( 0xFFFF00 );
-light.position.set( 10, 0, 25 );
-scene.add( light );
-
-
-var render = function () {
-  requestAnimationFrame( render );
-	// for (var i = 0, l = geometry.vertices.length; i<l; i++) {
-	//     // we'll move the x & y position of each vertice by a random amount
-	//   geometry.vertices[i].x += -10 + Math.random()*100;
-	//   geometry.vertices[i].y += -10 + Math.random()*100;
-	// }
-	// updateCamPosition();
-  renderer.render(scene, camera);
-
-  icosahedron.rotation.x += 0.1;
-  icosahedron.rotation.y += 0.1;
-  icosahedron.rotation.z += 0.10;
-};
-
-function updateCamPosition() {
-  // rotate our camera's position on the z/y axis
-  angle += 0.005;
-  var z = 100 * Math.cos(angle);
-  var y = 100 * Math.sin(angle);
-  camera.position.z = z;
-  camera.position.y = y;
-
-  /* rotate the camera so the angle it faces animates -
-   there's no exact science to this - I just picked a
-   random percentage of the z position */
-
-  camera.rotation.x = z*0.02;
-}
-
-render();
+  var spotlight = new THREE.SpotLight(0xffffff)
+  const pointLight = new THREE.PointLight(0xffffff, .5);
+  scene.add(pointLight)
+  spotlight.castShadow = false;
+  spotlight.position.set(30,60,60)
+  // scene.add(plane)
+  scene.add(spotlight)
+  // scene.add(cube)
+  camera.lookAt(scene.position)
+  document.body.appendChild(renderer.domElement)
+  var increment = 0
+  var render = function () {
+    increment += 0.01
+    requestAnimationFrame( render );
+    camera.position.y += Math.sin(increment) * .5
+    // camera.position.y++ 80;
+    // camera.position.z = 80;
+    // cube.position.y += Math.sin(increment) * 0.05
+    // cube.rotation.y +=  0.01
+    spinCamera()
+    renderer.render(scene, camera);
+  };
+  loadFont()
+  render();
+  /*
+  HELPERS
+  ~~~~~~~~~~~~~~~~~~~*/
+  //SETTINGS
+  var text = "aems",
+        height = 2,
+        size = 10,
+        curveSegments = 10,
+        bevelThickness = 1,
+        bevelSize = 0.3,
+        bevelSegments = 3,
+        bevelEnabled = true,
+        font = undefined
+  var rotation = 0
+  function spinCamera(){
+    rotation += 0.005
+    // camera.position.z = Math.sin(rotation) * 80;
+    // camera.position.x = Math.cos(rotation) * 80;
+    camera.lookAt(scene.position)
+  }
+  function loadFont() {
+    var loader = new THREE.FontLoader();
+    loader.load('../fonts/futura.typeface.json', function (res) {
+      font = res;
+      createText();
+    });
+  }
+  function createText() {
+    const textGeo = new THREE.TextGeometry( 'ARIES SEASON', {
+      font: font,
+      size: size,
+      height: height,
+      curveSegments:curveSegments,
+      weight: "normal",
+      bevelThickness:bevelThickness,
+      bevelSize:bevelSize,
+      bevelSegments:bevelSegments,
+      bevelEnabled:bevelEnabled
+    });
+    textGeo.computeBoundingBox();
+    textGeo.computeVertexNormals();
+    var text = new THREE.Mesh(textGeo, cubeMat)
+    text.position.x = -textGeo.boundingBox.max.x/2;
+    text.castShadow = true;
+    scene.add(text)
+  }

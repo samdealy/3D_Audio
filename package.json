@@ -1,0 +1,31 @@
+{
+  "name": "audio_3d_visualizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.6.1",
+    "three": "^0.91.0",
+    "webpack": "^3.11.0"
+  },
+  "devDependencies": {
+    "webpack-dev-server": "^2.10.1"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --hot --port 3000",
+    "webpack": "webpack --watch",
+    "postintall": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samdealy/3D_Audio.git"
+  },
+  "author": "Sam Dealy",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samdealy/3D_Audio/issues"
+  },
+  "homepage": "https://github.com/samdealy/3D_Audio#readme"
+}
