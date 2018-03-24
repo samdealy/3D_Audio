@@ -158,3 +158,14 @@ render();
 //     scene.add( group );
 //   });
 // }
+
+
+Plane stuff
+// const planeMat = new THREE.MeshLambertMaterial(0xffffff)
+
+// const cubeGeo = new THREE.BoxGeometry(5,5,5)
+
+// const planeGeo = new THREE.PlaneGeometry(100,100,100)
+// const plane    = new THREE.Mesh(planeGeo,planeMat)
+// plane.rotation.x = -.5 * Math.PI
+// plane.receiveShadow = true;

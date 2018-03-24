@@ -82,57 +82,67 @@ var scene = void 0,
     materials = void 0,
     mesh = void 0;
 
+//Scene
 scene = new THREE.Scene();
+
+//Camera
 camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
+camera.position.x = 0;
+camera.position.y = 0;
+camera.position.z = 200;
+camera.lookAt(scene.position);
+
+//Lights
+var spotlight = new THREE.SpotLight(0xffffff);
+var pointLight = new THREE.PointLight(0xffffff, .5);
+spotlight.castShadow = false;
+spotlight.position.set(30, 60, 60);
+
+scene.add(spotlight);
+scene.add(pointLight);
+
+//Materials
+var cubeMat = new THREE.MeshPhongMaterial({ color: 'rgb(255,223,0)' });
+var planeMat = new THREE.MeshBasicMaterial({
+  wireframe: true,
+  transparent: true,
+  opacity: 1,
+  wireframeLinewidth: 1,
+  wireframeLinejoin: 'round',
+  wireframeLinecap: 'round'
+});
+
+//Geometry
+var plane = new THREE.PlaneGeometry(10000, 10000, 100, 100);
+var planeMesh = new THREE.Mesh(plane, planeMat);
+planeMesh.rotation.x = -90 * Math.PI / 180;
+planeMesh.position.y = -100;
+scene.add(planeMesh);
+
+//Renderer
 renderer = new THREE.WebGLRenderer();
-camera.position.x = 40;
-camera.position.y = 80;
-camera.position.z = 80;
 renderer.setClearColor(0xa300ff);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
-//GEOMETRY
-var cubeGeo = new THREE.BoxGeometry(5, 5, 5);
-var cubeMat = new THREE.MeshPhongMaterial({ color: 'rgb(255,223,0)' });
-// var cube    = new THREE.Mesh(cubeGeo, cubeMat)
-// cube.castShadow = true;
-// cube.position.y = 2.5;
-var planeGeo = new THREE.PlaneGeometry(100, 100, 100);
-var planeMat = new THREE.MeshLambertMaterial(0xffffff);
-var plane = new THREE.Mesh(planeGeo, planeMat);
-plane.rotation.x = -.5 * Math.PI;
-plane.receiveShadow = true;
-
-var spotlight = new THREE.SpotLight(0xffffff);
-var pointLight = new THREE.PointLight(0xffffff, .5);
-scene.add(pointLight);
-spotlight.castShadow = false;
-spotlight.position.set(30, 60, 60);
-// scene.add(plane)
-scene.add(spotlight);
-// scene.add(cube)
-camera.lookAt(scene.position);
 document.body.appendChild(renderer.domElement);
+
+//Render Loop
 var increment = 0;
 var render = function render() {
   increment += 0.01;
   requestAnimationFrame(render);
-  camera.position.y += Math.sin(increment) * .5;
-  // camera.position.y++ 80;
-  // camera.position.z = 80;
   // cube.position.y += Math.sin(increment) * 0.05
-  // cube.rotation.y +=  0.01
   spinCamera();
   renderer.render(scene, camera);
 };
+
+//Script
 loadFont();
 render();
-/*
-HELPERS
-~~~~~~~~~~~~~~~~~~~*/
-//SETTINGS
-var text = "aems",
+
+//Text Settings
+var text = 'aems',
     height = 2,
     size = 10,
     curveSegments = 10,
@@ -141,6 +151,7 @@ var text = "aems",
     bevelSegments = 3,
     bevelEnabled = true,
     font = undefined;
+
 var rotation = 0;
 function spinCamera() {
   rotation += 0.005;
@@ -148,6 +159,7 @@ function spinCamera() {
   // camera.position.x = Math.cos(rotation) * 80;
   camera.lookAt(scene.position);
 }
+
 function loadFont() {
   var loader = new THREE.FontLoader();
   loader.load('../fonts/futura.typeface.json', function (res) {
@@ -155,6 +167,7 @@ function loadFont() {
     createText();
   });
 }
+
 function createText() {
   var textGeo = new THREE.TextGeometry('ARIES SEASON', {
     font: font,
@@ -169,6 +182,7 @@ function createText() {
   });
   textGeo.computeBoundingBox();
   textGeo.computeVertexNormals();
+
   var text = new THREE.Mesh(textGeo, cubeMat);
   text.position.x = -textGeo.boundingBox.max.x / 2;
   text.castShadow = true;
