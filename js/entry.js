@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { EffectComposer, GlitchPass, RenderPass, PixelationPass } from "postprocessing";
 let scene, camera, renderer, materials, mesh;
+const words = [];
+
 
   //Scene
   scene = new THREE.Scene()
@@ -9,7 +11,7 @@ let scene, camera, renderer, materials, mesh;
   camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight,.1, 1000);
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 400;
+  camera.position.z = 800;
   camera.lookAt(scene.position);
 
   //Lights
@@ -65,21 +67,22 @@ let scene, camera, renderer, materials, mesh;
   // glitchPass.renderToScreen = true;
   composer.addPass(glitchPass);
 
-  const pixelationPass = new PixelationPass(20);
+  const pixelationPass = new PixelationPass(0);
   composer.addPass(pixelationPass);
   pixelationPass.renderToScreen = true;
 
 
   //Render Loop
-  let increment = 0
+  let increment = 0, pixelationGranularity = 0;
   const render = () => {
     increment += 0.1
+    pixelationGranularity = (pixelationGranularity + 1) % 6
     requestAnimationFrame( render );
     // cube.position.y += Math.sin(increment) * 0.05
     spotLight.position.x =10+50*Math.sin(increment);
+    // pixelationPass.granularity = pixelationGranularity;
     // spotLight.position.y =10+50*Math.cos(increment);
-
-    camera.position.z -= Math.sin(increment / 10)
+    // camera.position.z -= Math.sin(increment / 10)
     spinCamera()
     // renderer.render(scene, camera);
     composer.render(scene, camera);
@@ -96,22 +99,29 @@ let scene, camera, renderer, materials, mesh;
 
   let rotation = 0
   function spinCamera(){
-    rotation += 0.005
+    rotation += 0.05
     // camera.position.z = Math.sin(rotation) * 80;
-    // camera.position.x = Math.cos(rotation) * 80;
-    // camera.lookAt(scene.position)
+    camera.position.x = Math.cos(rotation) * 80;
+    camera.lookAt(scene.position)
   }
 
   function loadFont() {
     var loader = new THREE.FontLoader();
     loader.load('../fonts/futura.typeface.json', function (res) {
       font = res;
-      createText();
+      createLyrics();
     });
   }
 
-  function createText() {
-    const textGeo = new THREE.TextGeometry( "Yikes it's ARIES SEASON", {
+
+  function createLyrics() {
+    ['yikes', 'it is', 'Aries', 'season'].forEach( word => {
+      words.concat(createText(word));
+    })
+  }
+
+  function createText(word) {
+    const textGeo = new THREE.TextGeometry( word, {
       font: font,
       size: size,
       height: height,
@@ -127,7 +137,12 @@ let scene, camera, renderer, materials, mesh;
 
     const text = new THREE.Mesh(textGeo, cubeMat)
     // const text = new THREE.Line(textGeo, cubeMat)
-    text.position.x = -textGeo.boundingBox.max.x/2;
+    const leftRight = Math.random() > .5 ? 1 : -1
+    const randomPosition = [leftRight * Math.random() * window.innerWidth / 4, leftRight *Math.random() * window.innerHeight / 4, 0]
+    text.position.set(randomPosition[0], randomPosition[1], randomPosition[2])
+
+    // text.position.x = Math.random() * -textGeo.boundingBox.max.x/2;
+    // text.position.y = Math.random() * textGeo.boundingBox.max.y/2;
     text.castShadow = true;
     scene.add(text)
   }

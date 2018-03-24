@@ -83,6 +83,7 @@ var scene = void 0,
     renderer = void 0,
     materials = void 0,
     mesh = void 0;
+var words = [];
 
 //Scene
 scene = new THREE.Scene();
@@ -91,7 +92,7 @@ scene = new THREE.Scene();
 camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
 camera.position.x = 0;
 camera.position.y = 0;
-camera.position.z = 400;
+camera.position.z = 800;
 camera.lookAt(scene.position);
 
 //Lights
@@ -146,20 +147,22 @@ var glitchPass = new _postprocessing.GlitchPass(0);
 // glitchPass.renderToScreen = true;
 composer.addPass(glitchPass);
 
-var pixelationPass = new _postprocessing.PixelationPass(20);
+var pixelationPass = new _postprocessing.PixelationPass(0);
 composer.addPass(pixelationPass);
 pixelationPass.renderToScreen = true;
 
 //Render Loop
-var increment = 0;
+var increment = 0,
+    pixelationGranularity = 0;
 var render = function render() {
   increment += 0.1;
+  pixelationGranularity = (pixelationGranularity + 1) % 6;
   requestAnimationFrame(render);
   // cube.position.y += Math.sin(increment) * 0.05
   spotLight.position.x = 10 + 50 * Math.sin(increment);
+  // pixelationPass.granularity = pixelationGranularity;
   // spotLight.position.y =10+50*Math.cos(increment);
-
-  camera.position.z -= Math.sin(increment / 10);
+  // camera.position.z -= Math.sin(increment / 10)
   spinCamera();
   // renderer.render(scene, camera);
   composer.render(scene, camera);
@@ -182,22 +185,28 @@ var text = 'aems',
 
 var rotation = 0;
 function spinCamera() {
-  rotation += 0.005;
+  rotation += 0.05;
   // camera.position.z = Math.sin(rotation) * 80;
-  // camera.position.x = Math.cos(rotation) * 80;
-  // camera.lookAt(scene.position)
+  camera.position.x = Math.cos(rotation) * 80;
+  camera.lookAt(scene.position);
 }
 
 function loadFont() {
   var loader = new THREE.FontLoader();
   loader.load('../fonts/futura.typeface.json', function (res) {
     font = res;
-    createText();
+    createLyrics();
   });
 }
 
-function createText() {
-  var textGeo = new THREE.TextGeometry("Yikes it's ARIES SEASON", {
+function createLyrics() {
+  ['yikes', 'it is', 'Aries', 'season'].forEach(function (word) {
+    words.concat(createText(word));
+  });
+}
+
+function createText(word) {
+  var textGeo = new THREE.TextGeometry(word, {
     font: font,
     size: size,
     height: height,
@@ -213,7 +222,12 @@ function createText() {
 
   var text = new THREE.Mesh(textGeo, cubeMat);
   // const text = new THREE.Line(textGeo, cubeMat)
-  text.position.x = -textGeo.boundingBox.max.x / 2;
+  var leftRight = Math.random() > .5 ? 1 : -1;
+  var randomPosition = [leftRight * Math.random() * window.innerWidth / 4, leftRight * Math.random() * window.innerHeight / 4, 0];
+  text.position.set(randomPosition[0], randomPosition[1], randomPosition[2]);
+
+  // text.position.x = Math.random() * -textGeo.boundingBox.max.x/2;
+  // text.position.y = Math.random() * textGeo.boundingBox.max.y/2;
   text.castShadow = true;
   scene.add(text);
 }
