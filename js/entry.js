@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { EffectComposer, GlitchPass, RenderPass } from "postprocessing";
+import { EffectComposer, GlitchPass, RenderPass, PixelationPass } from "postprocessing";
 let scene, camera, renderer, materials, mesh;
 
   //Scene
@@ -64,7 +64,10 @@ let scene, camera, renderer, materials, mesh;
   const glitchPass = new GlitchPass(0);
   // glitchPass.renderToScreen = true;
   composer.addPass(glitchPass);
-  glitchPass.renderToScreen = true;
+
+  const pixelationPass = new PixelationPass(20);
+  composer.addPass(pixelationPass);
+  pixelationPass.renderToScreen = true;
 
 
   //Render Loop

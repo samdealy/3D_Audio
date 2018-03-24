@@ -145,7 +145,10 @@ composer.addPass(renderPass);
 var glitchPass = new _postprocessing.GlitchPass(0);
 // glitchPass.renderToScreen = true;
 composer.addPass(glitchPass);
-glitchPass.renderToScreen = true;
+
+var pixelationPass = new _postprocessing.PixelationPass(20);
+composer.addPass(pixelationPass);
+pixelationPass.renderToScreen = true;
 
 //Render Loop
 var increment = 0;
