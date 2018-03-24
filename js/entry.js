@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { EffectComposer, GlitchPass, RenderPass } from "postprocessing";
 let scene, camera, renderer, materials, mesh;
 
   //Scene
@@ -8,20 +9,26 @@ let scene, camera, renderer, materials, mesh;
   camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight,.1, 1000);
   camera.position.x = 0;
   camera.position.y = 0;
-  camera.position.z = 200;
+  camera.position.z = 400;
   camera.lookAt(scene.position);
 
   //Lights
-  const spotlight  = new THREE.SpotLight(0xffffff)
+  const spotLight  = new THREE.SpotLight(0xffffff)
   const pointLight = new THREE.PointLight(0xffffff, .5);
-  spotlight.castShadow = false;
-  spotlight.position.set(30,60,60);
+  spotLight.castShadow = false;
+  spotLight.position.set(0,0,60);
 
-  scene.add(spotlight)
+  scene.add(spotLight)
   scene.add(pointLight);
 
   //Materials
-  const cubeMat  = new THREE.MeshPhongMaterial({color: 'rgb(255,223,0)' })
+  // const cubeMat  = new THREE.MeshPhongMaterial({color: 'rgb(255,223,0)' })
+  const cubeMat = new THREE.MeshStandardMaterial({
+    color: 'rgb(255,223,0)',
+    roughness: 0.8,
+    metalness: 1
+  });
+  // const cubeMat = new THREE.LineBasicMaterial();
   const planeMat = new THREE.MeshBasicMaterial({
     wireframe: true,
     transparent: true,
@@ -40,20 +47,39 @@ let scene, camera, renderer, materials, mesh;
 
   //Renderer
   renderer = new THREE.WebGLRenderer()
-  renderer.setClearColor(0xa300ff);
+  renderer.setClearColor(0xffcccc);
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMapSoft = true;
   document.body.appendChild(renderer.domElement);
 
+
+  //Composer
+  const composer = new EffectComposer(renderer);
+
+  //Passes
+  const renderPass = new RenderPass(scene, camera);
+  composer.addPass(renderPass);
+
+  const glitchPass = new GlitchPass(0);
+  // glitchPass.renderToScreen = true;
+  composer.addPass(glitchPass);
+  glitchPass.renderToScreen = true;
+
+
   //Render Loop
-  var increment = 0
-  var render = function () {
-    increment += 0.01
+  let increment = 0
+  const render = () => {
+    increment += 0.1
     requestAnimationFrame( render );
     // cube.position.y += Math.sin(increment) * 0.05
+    spotLight.position.x =10+50*Math.sin(increment);
+    // spotLight.position.y =10+50*Math.cos(increment);
+
+    camera.position.z -= Math.sin(increment / 10)
     spinCamera()
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
+    composer.render(scene, camera);
   };
 
   //Script
@@ -70,7 +96,7 @@ let scene, camera, renderer, materials, mesh;
     rotation += 0.005
     // camera.position.z = Math.sin(rotation) * 80;
     // camera.position.x = Math.cos(rotation) * 80;
-    camera.lookAt(scene.position)
+    // camera.lookAt(scene.position)
   }
 
   function loadFont() {
@@ -82,7 +108,7 @@ let scene, camera, renderer, materials, mesh;
   }
 
   function createText() {
-    const textGeo = new THREE.TextGeometry( 'ARIES SEASON', {
+    const textGeo = new THREE.TextGeometry( "Yikes it's ARIES SEASON", {
       font: font,
       size: size,
       height: height,
@@ -97,6 +123,7 @@ let scene, camera, renderer, materials, mesh;
     textGeo.computeVertexNormals();
 
     const text = new THREE.Mesh(textGeo, cubeMat)
+    // const text = new THREE.Line(textGeo, cubeMat)
     text.position.x = -textGeo.boundingBox.max.x/2;
     text.castShadow = true;
     scene.add(text)
