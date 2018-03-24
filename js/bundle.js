@@ -78,14 +78,48 @@ var _postprocessing = __webpack_require__(16);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
+// import { goWestTiming } from '../transcriptions/go_west.js'
 var scene = void 0,
     camera = void 0,
     renderer = void 0,
     materials = void 0,
     mesh = void 0;
 
-//Scene
-scene = new THREE.Scene();
+var goWestTiming = {
+  0: 'Welcome to 3D karaoke!',
+  8: "Safe on the interstate",
+  18: "New York is three thousand miles away",
+  25: "And I'm not looking forward to following through",
+  30: "But it's better than always running back into you",
+  35: "I've closed my eyes and my bank account",
+  40: "And gone west, young man",
+  46: "Take off the parking brake",
+  55: "Go coasting into a different state",
+  65: "And I'm not looking forward to missing you",
+  68: "But I must have something better to do",
+  73: "I've got to tear my life apart",
+  78: "And go west, young man",
+  85: "And it feels like I've got something to prove",
+  87: "But in some ways it's just something to do",
+  91: "My friends turn me around and say,",
+  97: "You go west, young man.",
+  107: "Stepping down off my platform shoes",
+  119: "Sixty-nine in the afternoon",
+  125: "And I'm waiting for someone in the know",
+  130: "Like Pirner tells me on the radio",
+  135: "Says Take it from someone who's been there before,",
+  140: "You go west, young man.",
+  143: "And I'm looking for somebody to do my thinking for me",
+  150: "Till I come through",
+  153: "The state-line highway sign says,",
+  159: "You have gone west, young man.",
+  167: "And it feels like I've got something to prove",
+  171: "But in some ways it's just something to do",
+  176: "The state-line highway sign says,",
+  180: "You have gone west, young man."
+
+  //Scene
+};scene = new THREE.Scene();
 
 //Camera
 camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
@@ -110,6 +144,7 @@ var cubeMat = new THREE.MeshStandardMaterial({
   roughness: 0.8,
   metalness: 1
 });
+
 // const cubeMat = new THREE.LineBasicMaterial();
 var planeMat = new THREE.MeshBasicMaterial({
   wireframe: true,
@@ -137,18 +172,18 @@ document.body.appendChild(renderer.domElement);
 
 // create an AudioListener and add it to the camera
 var listener = new THREE.AudioListener();
-camera.add(listener);
 
 // create a global audio source
-var sound = new THREE.Audio(listener);
+var song = new THREE.Audio(listener);
 
-// load a sound and set it as the Audio object's buffer
+// load a song and set it as the Audio object's buffer
 var audioLoader = new THREE.AudioLoader();
 audioLoader.load('https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function (buffer) {
-  sound.setBuffer(buffer);
-  sound.setLoop(true);
-  sound.setVolume(0.5);
-  sound.play();
+  song.setBuffer(buffer);
+  song.setLoop(true);
+  song.setVolume(0.5);
+  song.play();
+  setInterval(updateWords(), 1000);
 });
 
 //Composer
@@ -185,7 +220,6 @@ var render = function render() {
 
 //Script
 loadFont();
-debugger;
 render();
 
 //Text Settings
@@ -207,6 +241,8 @@ function spinCamera() {
   camera.lookAt(scene.position);
 }
 
+function updateWords() {}
+
 function loadFont() {
   var loader = new THREE.FontLoader();
   loader.load('../fonts/futura.typeface.json', function (res) {
@@ -217,7 +253,7 @@ function loadFont() {
 
 function createLyrics() {
   ['yikes', 'it is', 'Aries', 'season'].forEach(function (word) {
-    words.concat(createText(word));
+    createText(word);
   });
 }
 
