@@ -83,7 +83,6 @@ var scene = void 0,
     renderer = void 0,
     materials = void 0,
     mesh = void 0;
-var words = [];
 
 //Scene
 scene = new THREE.Scene();
@@ -136,6 +135,22 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
 
+// create an AudioListener and add it to the camera
+var listener = new THREE.AudioListener();
+camera.add(listener);
+
+// create a global audio source
+var sound = new THREE.Audio(listener);
+
+// load a sound and set it as the Audio object's buffer
+var audioLoader = new THREE.AudioLoader();
+audioLoader.load('https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function (buffer) {
+  sound.setBuffer(buffer);
+  sound.setLoop(true);
+  sound.setVolume(0.5);
+  sound.play();
+});
+
 //Composer
 var composer = new _postprocessing.EffectComposer(renderer);
 
@@ -170,6 +185,7 @@ var render = function render() {
 
 //Script
 loadFont();
+debugger;
 render();
 
 //Text Settings
@@ -185,9 +201,9 @@ var text = 'aems',
 
 var rotation = 0;
 function spinCamera() {
-  rotation += 0.05;
-  // camera.position.z = Math.sin(rotation) * 80;
-  camera.position.x = Math.cos(rotation) * 80;
+  rotation += 0.01;
+  camera.position.y = Math.sin(rotation) * 80;
+  camera.position.x = Math.cos(rotation) * 200;
   camera.lookAt(scene.position);
 }
 
