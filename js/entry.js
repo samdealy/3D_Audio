@@ -2,40 +2,7 @@ import * as THREE from 'three';
 import { EffectComposer, GlitchPass, RenderPass, PixelationPass } from "postprocessing";
 // import { goWestTiming } from '../transcriptions/go_west.js'
 let scene, camera, renderer, materials, mesh;
-
-  const goWestTiming = {
-  0: 'Welcome to 3D karaoke!',
-  8: "Safe on the interstate",
-  18: "New York is three thousand miles away",
-  25: "And I'm not looking forward to following through",
-  30: "But it's better than always running back into you",
-  35: "I've closed my eyes and my bank account",
-  40: "And gone west, young man",
-  46: "Take off the parking brake",
-  55: "Go coasting into a different state",
-  65: "And I'm not looking forward to missing you",
-  68: "But I must have something better to do",
-  73: "I've got to tear my life apart",
-  78: "And go west, young man",
-  85: "And it feels like I've got something to prove",
-  87: "But in some ways it's just something to do",
-  91: "My friends turn me around and say,",
-  97: "You go west, young man.",
-  107: "Stepping down off my platform shoes",
-  119: "Sixty-nine in the afternoon",
-  125: "And I'm waiting for someone in the know",
-  130: "Like Pirner tells me on the radio",
-  135: "Says Take it from someone who's been there before,",
-  140: "You go west, young man.",
-  143: "And I'm looking for somebody to do my thinking for me",
-  150: "Till I come through",
-  153: "The state-line highway sign says,",
-  159: "You have gone west, young man.",
-  167: "And it feels like I've got something to prove",
-  171: "But in some ways it's just something to do",
-  176: "The state-line highway sign says,",
-  180: "You have gone west, young man."
-}
+let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   //Scene
   scene = new THREE.Scene()
@@ -103,7 +70,7 @@ let scene, camera, renderer, materials, mesh;
   	song.setLoop( true );
   	song.setVolume( 0.5 );
   	song.play();
-    setInterval( updateWords(), 1000)
+    setInterval( updateWords, 1000)
   });
 
   //Composer
@@ -139,7 +106,7 @@ let scene, camera, renderer, materials, mesh;
   };
 
   //Script
-  loadFont();
+  // loadFont();
   render();
 
   //Text Settings
@@ -155,27 +122,59 @@ let scene, camera, renderer, materials, mesh;
     camera.lookAt(scene.position)
   }
 
-  function updateWords() {
-
+  const goWestTiming = {
+    1: 'Welcome to 3D karaoke!',
+    8: "Safe on the interstate",
+    18: "New York is three thousand miles away",
+    25: "And I'm not looking forward to following through",
+    30: "But it's better than always running back into you",
+    35: "I've closed my eyes and my bank account",
+    40: "And gone west, young man",
+    46: "Take off the parking brake",
+    55: "Go coasting into a different state",
+    65: "And I'm not looking forward to missing you",
+    68: "But I must have something better to do",
+    73: "I've got to tear my life apart",
+    78: "And go west, young man",
+    85: "And it feels like I've got something to prove",
+    87: "But in some ways it's just something to do",
+    91: "My friends turn me around and say,",
+    97: "You go west, young man.",
+    107: "Stepping down off my platform shoes",
+    119: "Sixty-nine in the afternoon",
+    125: "And I'm waiting for someone in the know",
+    130: "Like Pirner tells me on the radio",
+    135: "Says Take it from someone who's been there before,",
+    140: "You go west, young man.",
+    143: "And I'm looking for somebody to do my thinking for me",
+    150: "Till I come through",
+    153: "The state-line highway sign says,",
+    159: "You have gone west, young man.",
+    167: "And it feels like I've got something to prove",
+    171: "But in some ways it's just something to do",
+    176: "The state-line highway sign says,",
+    180: "You have gone west, young man."
   }
 
-  function loadFont() {
+  function updateWords() {
+    currentTime += 1;
+    if (goWestTiming[currentTime]) {
+      currentWord = goWestTiming[currentTime];
+      loadFont(currentWord);
+    }
+  }
+
+  function loadFont(currentWord) {
+    debugger
     var loader = new THREE.FontLoader();
     loader.load('../fonts/futura.typeface.json', function (res) {
       font = res;
-      createLyrics();
+      createText(currentWord);
     });
   }
 
-
-
-  function createLyrics() {
-    ['yikes', 'it is', 'Aries', 'season'].forEach( word => {
-      createText(word)
-    })
-  }
-
   function createText(word) {
+    removeText();
     const textGeo = new THREE.TextGeometry( word, {
       font: font,
       size: size,
@@ -191,13 +190,19 @@ let scene, camera, renderer, materials, mesh;
     textGeo.computeVertexNormals();
 
     const text = new THREE.Mesh(textGeo, cubeMat)
-    // const text = new THREE.Line(textGeo, cubeMat)
-    const leftRight = Math.random() > .5 ? 1 : -1
-    const randomPosition = [leftRight * Math.random() * window.innerWidth / 4, leftRight *Math.random() * window.innerHeight / 4, 0]
-    text.position.set(randomPosition[0], randomPosition[1], randomPosition[2])
 
-    // text.position.x = Math.random() * -textGeo.boundingBox.max.x/2;
-    // text.position.y = Math.random() * textGeo.boundingBox.max.y/2;
+    const leftRight = Math.random() > .5 ? 1 : -1;
+    const xDimension = leftRight * Math.random() * window.innerWidth  / 4;
+    const yDimension = leftRight * Math.random() * window.innerHeight / 4
+    const randomPosition = [xDimension, yDimension, 0]
+
+    text.position.set(randomPosition[0], randomPosition[1], randomPosition[2])
     text.castShadow = true;
+    text.name ='lyrics'
     scene.add(text)
+  }
+
+  function removeText() {
+    const oldLyrics = scene.getObjectByName('lyrics');
+    if (oldLyrics) scene.remove(oldLyrics);
   }
