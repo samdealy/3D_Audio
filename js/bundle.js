@@ -98,11 +98,13 @@ camera.position.z = 800;
 camera.lookAt(scene.position);
 
 //Lights
+var ambientLight = new THREE.AmbientLight(0xffffff);
 var spotLight = new THREE.SpotLight(0xffffff);
 var pointLight = new THREE.PointLight(0xffffff, .5);
 spotLight.castShadow = false;
-spotLight.position.set(0, 0, 60);
+spotLight.position.set(0, 0, 200);
 
+// scene.add(ambientLight)
 scene.add(spotLight);
 scene.add(pointLight);
 
@@ -111,7 +113,7 @@ scene.add(pointLight);
 var cubeMat = new THREE.MeshStandardMaterial({
   color: 'rgb(255,223,0)',
   roughness: 0.8,
-  metalness: 1
+  metalness: .2
 });
 
 // const cubeMat = new THREE.LineBasicMaterial();
@@ -126,10 +128,12 @@ var planeMat = new THREE.MeshBasicMaterial({
 
 //Geometry
 var plane = new THREE.PlaneGeometry(10000, 10000, 100, 100);
-var planeMesh = new THREE.Mesh(plane, planeMat);
-planeMesh.rotation.x = -90 * Math.PI / 180;
-planeMesh.position.y = -100;
-scene.add(planeMesh);
+for (var i = 0; i < 20; i++) {
+  var planeMesh = new THREE.Mesh(plane, planeMat);
+  planeMesh.rotation.x = -90 * Math.PI / 180;
+  planeMesh.position.y = -100 + 20 * i;
+  scene.add(planeMesh);
+}
 
 //Renderer
 renderer = new THREE.WebGLRenderer();
@@ -183,6 +187,7 @@ var render = function render() {
   // spotLight.position.y =10+50*Math.cos(increment);
   // camera.position.z -= Math.sin(increment / 10)
   spinCamera();
+  // spinText();
   // renderer.render(scene, camera);
   composer.render(scene, camera);
 };
@@ -193,7 +198,7 @@ render();
 
 //Text Settings
 var text = 'aems',
-    height = 2,
+    height = 100,
     size = 10,
     curveSegments = 10,
     bevelThickness = 1,
@@ -210,13 +215,19 @@ function spinCamera() {
   camera.lookAt(scene.position);
 }
 
+function spinText() {
+  text = scene.getObjectByName('lyrics');
+  if (text) {
+    object.rotateX(.2);
+  }
+}
 var goWestTiming = {
   1: 'Welcome to 3D karaoke!',
   8: "Safe on the interstate",
   18: "New York is three thousand miles away",
   25: "And I'm not looking forward to following through",
-  30: "But it's better than always running back into you",
-  35: "I've closed my eyes and my bank account",
+  32: "But it's better than always running back into you",
+  37: "I've closed my eyes and my bank account",
   40: "And gone west, young man",
   46: "Take off the parking brake",
   55: "Go coasting into a different state",
@@ -280,8 +291,8 @@ function createText(word) {
   var text = new THREE.Mesh(textGeo, cubeMat);
 
   var leftRight = Math.random() > .5 ? 1 : -1;
-  var xDimension = leftRight * Math.random() * window.innerWidth / 4;
-  var yDimension = leftRight * Math.random() * window.innerHeight / 4;
+  var xDimension = leftRight * Math.random() * window.innerWidth / 8;
+  var yDimension = leftRight * Math.random() * window.innerHeight / 8;
   var randomPosition = [xDimension, yDimension, 0];
 
   text.position.set(randomPosition[0], randomPosition[1], randomPosition[2]);
