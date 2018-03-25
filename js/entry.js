@@ -19,10 +19,10 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   spotLight.castShadow = false;
   spotLight.position.set(0,0,200);
 
-  const pointLight = new THREE.PointLight(0xffffff, .5);
+  const pointLight  = new THREE.PointLight(0xffffff, .5);
   pointLight.name   = 'pointLight';
 
-  scene.add(spotLight)
+  scene.add(spotLight);
   scene.add(pointLight);
 
   //Materials
@@ -50,7 +50,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
     scene.add(planeMesh);
   }
 
-
   //Renderer
   renderer = new THREE.WebGLRenderer()
   renderer.setClearColor(0xffcccc);
@@ -59,27 +58,19 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   renderer.shadowMapSoft = true;
   document.body.appendChild(renderer.domElement);
 
-  const listener = new THREE.AudioListener();
-  const song     = new THREE.Audio( listener );
+  const listener    = new THREE.AudioListener();
+  const song        = new THREE.Audio( listener );
   const audioLoader = new THREE.AudioLoader();
 
-  audioLoader.load( 'https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function( buffer ) {
-  	song.setBuffer( buffer );
-  	song.setLoop( true );
-  	song.setVolume( 0.5 );
-  	song.play();
-    interval = setInterval( updateWords, 1000);
-  });
+  song.onEnded = function() {
+    this.isPlaying = false;
+    resetSong();
+  }
+  loadAudio();
 
-  //AudioAnalyser
-  // const bufferLength = 512;
-  // analyser = new THREE.AudioAnalyser( song, bufferLength );
-  // audioArray = new Uint8Array(bufferLength);
-
-  //Composer
+  //Composer + Passes
   const composer = new EffectComposer(renderer);
 
-  //Passes
   const renderPass = new RenderPass(scene, camera);
   composer.addPass(renderPass);
 
@@ -104,7 +95,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   //Script
   render();
-
 
 
   //**HELPERS**
@@ -163,6 +153,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   function updateWords() {
     currentTime += 1;
+    debugger
     if (goWestTiming[currentTime]) {
       currentWord = goWestTiming[currentTime];
       loadFont(currentWord);
@@ -219,3 +210,19 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
      camera.updateProjectionMatrix();
      renderer.setSize( window.innerWidth, window.innerHeight );
    }
+
+  function resetSong() {
+    clearInterval(interval);
+    currentTime = 0;
+    loadAudio();
+  }
+
+  function loadAudio() {
+    audioLoader.load( 'https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function( buffer ) {
+      song.setBuffer(buffer);
+      song.setLoop(false);
+      song.setVolume(0.5);
+      song.play();
+      interval = setInterval( updateWords, 1000);
+    });
+  }

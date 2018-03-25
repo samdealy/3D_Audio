@@ -146,23 +146,15 @@ var listener = new THREE.AudioListener();
 var song = new THREE.Audio(listener);
 var audioLoader = new THREE.AudioLoader();
 
-audioLoader.load('https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function (buffer) {
-  song.setBuffer(buffer);
-  song.setLoop(true);
-  song.setVolume(0.5);
-  song.play();
-  interval = setInterval(updateWords, 1000);
-});
+song.onEnded = function () {
+  this.isPlaying = false;
+  resetSong();
+};
+loadAudio();
 
-//AudioAnalyser
-// const bufferLength = 512;
-// analyser = new THREE.AudioAnalyser( song, bufferLength );
-// audioArray = new Uint8Array(bufferLength);
-
-//Composer
+//Composer + Passes
 var composer = new _postprocessing.EffectComposer(renderer);
 
-//Passes
 var renderPass = new _postprocessing.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
@@ -248,6 +240,7 @@ var goWestTiming = {
 
 function updateWords() {
   currentTime += 1;
+  debugger;
   if (goWestTiming[currentTime]) {
     currentWord = goWestTiming[currentTime];
     loadFont(currentWord);
@@ -303,6 +296,22 @@ function onWindowResize(event) {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+function resetSong() {
+  clearInterval(interval);
+  currentTime = 0;
+  loadAudio();
+}
+
+function loadAudio() {
+  audioLoader.load('https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function (buffer) {
+    song.setBuffer(buffer);
+    song.setLoop(false);
+    song.setVolume(0.5);
+    song.play();
+    interval = setInterval(updateWords, 1000);
+  });
 }
 
 /***/ }),
