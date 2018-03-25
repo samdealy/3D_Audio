@@ -78,17 +78,18 @@ var _postprocessing = __webpack_require__(16);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-// import { goWestTiming } from '../transcriptions/go_west.js'
 var scene = void 0,
     camera = void 0,
     renderer = void 0,
     materials = void 0,
-    mesh = void 0;
+    mesh = void 0,
+    interval = void 0;
 var currentTime = 0,
     currentWord = 'Welcome to 3D karaoke!';
 
 //Scene
 scene = new THREE.Scene();
+window.scene = scene;
 
 //Camera
 camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, .1, 1000);
@@ -98,25 +99,23 @@ camera.position.z = 800;
 camera.lookAt(scene.position);
 
 //Lights
-var ambientLight = new THREE.AmbientLight(0xffffff);
 var spotLight = new THREE.SpotLight(0xffffff);
-var pointLight = new THREE.PointLight(0xffffff, .5);
 spotLight.castShadow = false;
 spotLight.position.set(0, 0, 200);
 
-// scene.add(ambientLight)
+var pointLight = new THREE.PointLight(0xffffff, .5);
+pointLight.name = 'pointLight';
+
 scene.add(spotLight);
 scene.add(pointLight);
 
 //Materials
-// const cubeMat  = new THREE.MeshPhongMaterial({color: 'rgb(255,223,0)' })
 var cubeMat = new THREE.MeshStandardMaterial({
   color: 'rgb(255,223,0)',
   roughness: 0.8,
   metalness: .2
 });
 
-// const cubeMat = new THREE.LineBasicMaterial();
 var planeMat = new THREE.MeshBasicMaterial({
   wireframe: true,
   transparent: true,
@@ -143,21 +142,22 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMapSoft = true;
 document.body.appendChild(renderer.domElement);
 
-// create an AudioListener and add it to the camera
 var listener = new THREE.AudioListener();
-
-// create a global audio source
 var song = new THREE.Audio(listener);
-
-// load a song and set it as the Audio object's buffer
 var audioLoader = new THREE.AudioLoader();
+
 audioLoader.load('https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function (buffer) {
   song.setBuffer(buffer);
   song.setLoop(true);
   song.setVolume(0.5);
   song.play();
-  setInterval(updateWords, 1000);
+  interval = setInterval(updateWords, 1000);
 });
+
+//AudioAnalyser
+// const bufferLength = 512;
+// analyser = new THREE.AudioAnalyser( song, bufferLength );
+// audioArray = new Uint8Array(bufferLength);
 
 //Composer
 var composer = new _postprocessing.EffectComposer(renderer);
@@ -167,39 +167,33 @@ var renderPass = new _postprocessing.RenderPass(scene, camera);
 composer.addPass(renderPass);
 
 var glitchPass = new _postprocessing.GlitchPass(0);
-// glitchPass.renderToScreen = true;
+glitchPass.renderToScreen = true;
 composer.addPass(glitchPass);
 
-var pixelationPass = new _postprocessing.PixelationPass(0);
-composer.addPass(pixelationPass);
-pixelationPass.renderToScreen = true;
-
 //Render Loop
-var increment = 0,
-    pixelationGranularity = 0;
+var increment = 0;
 var render = function render() {
   increment += 0.1;
-  pixelationGranularity = (pixelationGranularity + 1) % 6;
   requestAnimationFrame(render);
-  // cube.position.y += Math.sin(increment) * 0.05
-  spotLight.position.x = 10 + 50 * Math.sin(increment);
-  // pixelationPass.granularity = pixelationGranularity;
-  // spotLight.position.y =10+50*Math.cos(increment);
-  // camera.position.z -= Math.sin(increment / 10)
+
+  var lyrics = scene.getObjectByName('lyrics');
+  spotLight.position.x = 50 * Math.sin(increment);
   spinCamera();
-  // spinText();
-  // renderer.render(scene, camera);
   composer.render(scene, camera);
 };
 
+//Resize
+window.addEventListener('resize', onWindowResize, false);
+
 //Script
-// loadFont();
 render();
+
+//**HELPERS**
 
 //Text Settings
 var text = 'aems',
     height = 100,
-    size = 10,
+    size = 15,
     curveSegments = 10,
     bevelThickness = 1,
     bevelSize = 0.3,
@@ -212,15 +206,12 @@ function spinCamera() {
   rotation += 0.01;
   camera.position.y = Math.sin(rotation) * 80;
   camera.position.x = Math.cos(rotation) * 200;
-  camera.lookAt(scene.position);
+
+  var lyrics = scene.getObjectByName('lyrics');
+  if (lyrics) camera.lookAt(lyrics.position);else camera.lookAt(scene.position);
 }
 
-function spinText() {
-  text = scene.getObjectByName('lyrics');
-  if (text) {
-    object.rotateX(.2);
-  }
-}
+//Word Updating
 var goWestTiming = {
   1: 'Welcome to 3D karaoke!',
   8: "Safe on the interstate",
@@ -264,7 +255,6 @@ function updateWords() {
 }
 
 function loadFont(currentWord) {
-  debugger;
   var loader = new THREE.FontLoader();
   loader.load('../fonts/futura.typeface.json', function (res) {
     font = res;
@@ -275,10 +265,7 @@ function loadFont(currentWord) {
 function createText(word) {
   removeText();
   var textGeo = new THREE.TextGeometry(word, {
-    font: font,
-    size: size,
-    height: height,
-    curveSegments: curveSegments,
+    font: font, size: size, height: height, curveSegments: curveSegments,
     weight: "normal",
     bevelThickness: bevelThickness,
     bevelSize: bevelSize,
@@ -289,21 +276,33 @@ function createText(word) {
   textGeo.computeVertexNormals();
 
   var text = new THREE.Mesh(textGeo, cubeMat);
-
   var leftRight = Math.random() > .5 ? 1 : -1;
   var xDimension = leftRight * Math.random() * window.innerWidth / 8;
   var yDimension = leftRight * Math.random() * window.innerHeight / 8;
   var randomPosition = [xDimension, yDimension, 0];
 
   text.position.set(randomPosition[0], randomPosition[1], randomPosition[2]);
+  setPointLightPosition(randomPosition);
   text.castShadow = true;
   text.name = 'lyrics';
   scene.add(text);
 }
 
+function setPointLightPosition(pos) {
+  var pointLight = scene.getObjectByName('pointLight');
+  pointLight.position.set(pos[0], pos[1], pos[2] + 100);
+  debugger;
+}
+
 function removeText() {
   var oldLyrics = scene.getObjectByName('lyrics');
   if (oldLyrics) scene.remove(oldLyrics);
+}
+
+function onWindowResize(event) {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 }
 
 /***/ }),

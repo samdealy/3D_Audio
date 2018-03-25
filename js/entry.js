@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import { EffectComposer, GlitchPass, RenderPass, PixelationPass } from "postprocessing";
-// import { goWestTiming } from '../transcriptions/go_west.js'
-let scene, camera, renderer, materials, mesh;
+import { EffectComposer, GlitchPass, RenderPass} from "postprocessing";
+let scene, camera, renderer, materials, mesh, interval;
 let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   //Scene
-  scene = new THREE.Scene()
+  scene = new THREE.Scene();
+  window.scene = scene;
 
   //Camera
   camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight,.1, 1000);
@@ -15,25 +15,23 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   camera.lookAt(scene.position);
 
   //Lights
-  const ambientLight = new THREE.AmbientLight(0xffffff);
-  const spotLight  = new THREE.SpotLight(0xffffff)
-  const pointLight = new THREE.PointLight(0xffffff, .5);
+  const spotLight  = new THREE.SpotLight(0xffffff);
   spotLight.castShadow = false;
   spotLight.position.set(0,0,200);
 
-  // scene.add(ambientLight)
+  const pointLight = new THREE.PointLight(0xffffff, .5);
+  pointLight.name   = 'pointLight';
+
   scene.add(spotLight)
   scene.add(pointLight);
 
   //Materials
-  // const cubeMat  = new THREE.MeshPhongMaterial({color: 'rgb(255,223,0)' })
   const cubeMat = new THREE.MeshStandardMaterial({
     color: 'rgb(255,223,0)',
     roughness: 0.8,
     metalness: .2
   });
 
-  // const cubeMat = new THREE.LineBasicMaterial();
   const planeMat = new THREE.MeshBasicMaterial({
     wireframe: true,
     transparent: true,
@@ -61,22 +59,22 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   renderer.shadowMapSoft = true;
   document.body.appendChild(renderer.domElement);
 
-  // create an AudioListener and add it to the camera
   const listener = new THREE.AudioListener();
+  const song     = new THREE.Audio( listener );
+  const audioLoader = new THREE.AudioLoader();
 
-
-  // create a global audio source
-  var song = new THREE.Audio( listener );
-
-  // load a song and set it as the Audio object's buffer
-  var audioLoader = new THREE.AudioLoader();
   audioLoader.load( 'https://s3.amazonaws.com/3d-audio-visualizer/07+-+Go+West.mp3', function( buffer ) {
   	song.setBuffer( buffer );
   	song.setLoop( true );
   	song.setVolume( 0.5 );
   	song.play();
-    setInterval( updateWords, 1000)
+    interval = setInterval( updateWords, 1000);
   });
+
+  //AudioAnalyser
+  // const bufferLength = 512;
+  // analyser = new THREE.AudioAnalyser( song, bufferLength );
+  // audioArray = new Uint8Array(bufferLength);
 
   //Composer
   const composer = new EffectComposer(renderer);
@@ -86,37 +84,33 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   composer.addPass(renderPass);
 
   const glitchPass = new GlitchPass(0);
-  // glitchPass.renderToScreen = true;
+  glitchPass.renderToScreen = true;
   composer.addPass(glitchPass);
 
-  const pixelationPass = new PixelationPass(0);
-  composer.addPass(pixelationPass);
-  pixelationPass.renderToScreen = true;
-
-
   //Render Loop
-  let increment = 0, pixelationGranularity = 0;
+  let increment = 0
   const render = () => {
     increment += 0.1
-    pixelationGranularity = (pixelationGranularity + 1) % 6
-    requestAnimationFrame( render );
-    // cube.position.y += Math.sin(increment) * 0.05
-    spotLight.position.x =10+50*Math.sin(increment);
-    // pixelationPass.granularity = pixelationGranularity;
-    // spotLight.position.y =10+50*Math.cos(increment);
-    // camera.position.z -= Math.sin(increment / 10)
+    requestAnimationFrame(render);
+
+    const lyrics = scene.getObjectByName('lyrics')
+    spotLight.position.x =50*Math.sin(increment);
     spinCamera();
-    // spinText();
-    // renderer.render(scene, camera);
     composer.render(scene, camera);
   };
 
+  //Resize
+  window.addEventListener( 'resize', onWindowResize, false );
+
   //Script
-  // loadFont();
   render();
 
+
+
+  //**HELPERS**
+
   //Text Settings
-  let text = 'aems', height = 100, size = 10, curveSegments = 10,
+  let text = 'aems', height = 100, size = 15, curveSegments = 10,
         bevelThickness = 1, bevelSize = 0.3, bevelSegments = 3,
         bevelEnabled = true, font = undefined
 
@@ -125,15 +119,14 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
     rotation += 0.01
     camera.position.y = Math.sin(rotation) * 80;
     camera.position.x = Math.cos(rotation) * 200;
-    camera.lookAt(scene.position)
+
+    const lyrics = scene.getObjectByName('lyrics');
+    if (lyrics) camera.lookAt(lyrics.position);
+    else camera.lookAt(scene.position);
+
   }
 
-  function spinText() {
-    text = scene.getObjectByName('lyrics');
-    if (text) {
-      object.rotateX(.2);
-    }
-  }
+  //Word Updating
   const goWestTiming = {
     1: 'Welcome to 3D karaoke!',
     8: "Safe on the interstate",
@@ -177,7 +170,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   }
 
   function loadFont(currentWord) {
-    debugger
     var loader = new THREE.FontLoader();
     loader.load('../fonts/futura.typeface.json', function (res) {
       font = res;
@@ -188,10 +180,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   function createText(word) {
     removeText();
     const textGeo = new THREE.TextGeometry( word, {
-      font: font,
-      size: size,
-      height: height,
-      curveSegments:curveSegments,
+      font: font, size: size, height: height, curveSegments:curveSegments,
       weight: "normal",
       bevelThickness:bevelThickness,
       bevelSize:bevelSize,
@@ -202,19 +191,31 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
     textGeo.computeVertexNormals();
 
     const text = new THREE.Mesh(textGeo, cubeMat)
-
     const leftRight = Math.random() > .5 ? 1 : -1;
     const xDimension = leftRight * Math.random() * window.innerWidth  / 8;
     const yDimension = leftRight * Math.random() * window.innerHeight / 8;
     const randomPosition = [xDimension, yDimension, 0]
 
     text.position.set(randomPosition[0], randomPosition[1], randomPosition[2])
+    setPointLightPosition(randomPosition);
     text.castShadow = true;
     text.name ='lyrics'
     scene.add(text)
+  }
+
+  function setPointLightPosition(pos) {
+    const pointLight = scene.getObjectByName('pointLight')
+    pointLight.position.set(pos[0], pos[1], pos[2] + 100)
+    debugger
   }
 
   function removeText() {
     const oldLyrics = scene.getObjectByName('lyrics');
     if (oldLyrics) scene.remove(oldLyrics);
   }
+
+  function onWindowResize( event ) {
+     camera.aspect = window.innerWidth / window.innerHeight;
+     camera.updateProjectionMatrix();
+     renderer.setSize( window.innerWidth, window.innerHeight );
+   }
