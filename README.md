@@ -1,7 +1,8 @@
 # 3D Karaoke
 
-<img src="./images/welcome_text.png" alt="welcome text" width="340" height="190">
-![welcome text](./images/welcome_text.png)
+<img src="./images/welcome_text.png" alt="welcome text"
+  width="340" height="190" align="center">
+  
 Welcome to 3D karaoke, a three-dimensional audio-visualizer built using
 the Three.js library.
 
