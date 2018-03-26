@@ -162,7 +162,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   function loadFont(currentWord) {
     var loader = new THREE.FontLoader();
-    loader.load('fonts/futura.typeface.json', function (res) {
+    loader.load('3D_Karaoke/fonts/futura.typeface.json', function (res) {
       font = res;
       createText(currentWord);
     });
