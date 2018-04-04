@@ -47503,12 +47503,17 @@ var gui = new _dat2.default.GUI();
 var folder1 = gui.addFolder('song');
 folder1.add(song, 'volume', 0, 1).onChange(function (level) {
   song.volume = level;
-  song.setVolume(level);
+  if (!song.muted) song.setVolume(level);
 });
 
 folder1.add(song, 'mute').onChange(function (muted) {
-
-  if (muted) song.setVolume(0);else song.setVolume(song.volume);
+  if (muted) {
+    song.muted = true;
+    song.setVolume(0);
+  } else {
+    song.muted = false;
+    song.setVolume(song.volume);
+  }
 });
 folder1.open();
 

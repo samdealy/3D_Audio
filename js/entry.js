@@ -93,13 +93,18 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   const folder1 = gui.addFolder('song');
   folder1.add(song, 'volume', 0, 1).onChange( level => {
     song.volume  = level;
-    song.setVolume(level);
+    if (!song.muted) song.setVolume(level);
   })
 
   folder1.add(song, 'mute').onChange( muted => {
-
-    if (muted) song.setVolume(0);
-    else song.setVolume(song.volume);
+    if (muted) {
+      song.muted = true;
+      song.setVolume(0);
+    }
+    else {
+      song.muted = false;
+      song.setVolume(song.volume);
+    }
   })
   folder1.open();
 
