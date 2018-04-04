@@ -77,10 +77,14 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   const composer = new EffectComposer(renderer);
 
   const renderPass = new RenderPass(scene, camera);
+  window.renderPass = renderPass;
+  renderPass.renderToScreen = false;
   composer.addPass(renderPass);
 
   const glitchPass = new GlitchPass(0);
+  glitchPass.visible = true;
   glitchPass.renderToScreen = true;
+  window.glitchPass = glitchPass;
   composer.addPass(glitchPass);
 
   //Dat.gui
@@ -99,15 +103,18 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   })
   folder1.open();
 
-  // const folder2 = gui.addFolder('glitch');
-  // folder2.add(glitchPass, 'enabled').onChange( enabled => {
-  //   if (enabled) {
-  //     glitchPass.enabled = true;
-  //   }
-  //   else {
-  //     glitchPass.enabled = false;
-  //   }
-  // });
+  const folder2 = gui.addFolder('glitch');
+  folder2.add(glitchPass, 'visible').onChange( visible => {
+    if (visible) {
+      renderPass.renderToScreen = false;
+      glitchPass.renderToScreen = true;
+    }
+    else {
+      glitchPass.renderToScreen = false;
+      renderPass.renderToScreen = true;
+      debugger
+    }
+  });
 
 
   //Render Loop

@@ -47487,10 +47487,14 @@ loadAudio();
 var composer = new _postprocessing.EffectComposer(renderer);
 
 var renderPass = new _postprocessing.RenderPass(scene, camera);
+window.renderPass = renderPass;
+renderPass.renderToScreen = false;
 composer.addPass(renderPass);
 
 var glitchPass = new _postprocessing.GlitchPass(0);
+glitchPass.visible = true;
 glitchPass.renderToScreen = true;
+window.glitchPass = glitchPass;
 composer.addPass(glitchPass);
 
 //Dat.gui
@@ -47508,16 +47512,17 @@ folder1.add(song, 'mute').onChange(function (muted) {
 });
 folder1.open();
 
-// const folder2 = gui.addFolder('glitch');
-// folder2.add(glitchPass, 'enabled').onChange( enabled => {
-//   if (enabled) {
-//     glitchPass.enabled = true;
-//   }
-//   else {
-//     glitchPass.enabled = false;
-//   }
-// });
-
+var folder2 = gui.addFolder('glitch');
+folder2.add(glitchPass, 'visible').onChange(function (visible) {
+  if (visible) {
+    renderPass.renderToScreen = false;
+    glitchPass.renderToScreen = true;
+  } else {
+    glitchPass.renderToScreen = false;
+    renderPass.renderToScreen = true;
+    debugger;
+  }
+});
 
 //Render Loop
 var increment = 0;
