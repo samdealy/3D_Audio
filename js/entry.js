@@ -63,7 +63,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   const song        = new THREE.Audio( listener );
   song.volume = .5;
   song.mute   = false;
-  window.song = song;
 
   const audioLoader = new THREE.AudioLoader();
 
@@ -74,6 +73,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   loadAudio();
 
   //Composer + Passes
+  //Composer + Passes
   const composer = new EffectComposer(renderer);
 
   const renderPass = new RenderPass(scene, camera);
@@ -83,8 +83,8 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   glitchPass.renderToScreen = true;
   composer.addPass(glitchPass);
 
-
   //Dat.gui
+
   const gui = new dat.GUI();
   const folder1 = gui.addFolder('song');
   folder1.add(song, 'volume', 0, 1).onChange( level => {
@@ -93,14 +93,22 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   })
 
   folder1.add(song, 'mute').onChange( muted => {
-    debugger
+
     if (muted) song.setVolume(0);
     else song.setVolume(song.volume);
   })
   folder1.open();
 
+  // const folder2 = gui.addFolder('glitch');
+  // folder2.add(glitchPass, 'enabled').onChange( enabled => {
+  //   if (enabled) {
+  //     glitchPass.enabled = true;
+  //   }
+  //   else {
+  //     glitchPass.enabled = false;
+  //   }
+  // });
 
-  // volume
 
   //Render Loop
   let increment = 0

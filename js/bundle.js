@@ -47473,7 +47473,6 @@ var listener = new THREE.AudioListener();
 var song = new THREE.Audio(listener);
 song.volume = .5;
 song.mute = false;
-window.song = song;
 
 var audioLoader = new THREE.AudioLoader();
 
@@ -47483,6 +47482,7 @@ song.onEnded = function () {
 };
 loadAudio();
 
+//Composer + Passes
 //Composer + Passes
 var composer = new _postprocessing.EffectComposer(renderer);
 
@@ -47494,6 +47494,7 @@ glitchPass.renderToScreen = true;
 composer.addPass(glitchPass);
 
 //Dat.gui
+
 var gui = new _dat2.default.GUI();
 var folder1 = gui.addFolder('song');
 folder1.add(song, 'volume', 0, 1).onChange(function (level) {
@@ -47502,12 +47503,21 @@ folder1.add(song, 'volume', 0, 1).onChange(function (level) {
 });
 
 folder1.add(song, 'mute').onChange(function (muted) {
-  debugger;
+
   if (muted) song.setVolume(0);else song.setVolume(song.volume);
 });
 folder1.open();
 
-// volume
+// const folder2 = gui.addFolder('glitch');
+// folder2.add(glitchPass, 'enabled').onChange( enabled => {
+//   if (enabled) {
+//     glitchPass.enabled = true;
+//   }
+//   else {
+//     glitchPass.enabled = false;
+//   }
+// });
+
 
 //Render Loop
 var increment = 0;
