@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { EffectComposer, GlitchPass, RenderPass} from "postprocessing";
+import dat from 'dat.gui';
 let scene, camera, renderer, materials, mesh, interval;
 let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
@@ -42,7 +43,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   });
 
   //Geometry
-  const plane = new THREE.PlaneGeometry(10000, 10000, 100, 100);
+  const plane  = new THREE.PlaneGeometry(10000, 10000, 100, 100);
   for (let i = 0; i < 20; i++) {
     const planeMesh = new THREE.Mesh(plane, planeMat);
     planeMesh.rotation.x = -90 * Math.PI / 180;
@@ -60,6 +61,10 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   const listener    = new THREE.AudioListener();
   const song        = new THREE.Audio( listener );
+  song.volume = .5;
+  song.mute   = false;
+  window.song = song;
+
   const audioLoader = new THREE.AudioLoader();
 
   song.onEnded = function() {
@@ -77,6 +82,25 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   const glitchPass = new GlitchPass(0);
   glitchPass.renderToScreen = true;
   composer.addPass(glitchPass);
+
+
+  //Dat.gui
+  const gui = new dat.GUI();
+  const folder1 = gui.addFolder('song');
+  folder1.add(song, 'volume', 0, 1).onChange( level => {
+    song.volume  = level;
+    song.setVolume(level);
+  })
+
+  folder1.add(song, 'mute').onChange( muted => {
+    debugger
+    if (muted) song.setVolume(0);
+    else song.setVolume(song.volume);
+  })
+  folder1.open();
+
+
+  // volume
 
   //Render Loop
   let increment = 0
@@ -153,7 +177,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   function updateWords() {
     currentTime += 1;
-    debugger
+
     if (goWestTiming[currentTime]) {
       currentWord = goWestTiming[currentTime];
       loadFont(currentWord);
@@ -197,7 +221,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   function setPointLightPosition(pos) {
     const pointLight = scene.getObjectByName('pointLight')
     pointLight.position.set(pos[0], pos[1], pos[2] + 100)
-    debugger
+
   }
 
   function removeText() {
