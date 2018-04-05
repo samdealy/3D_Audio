@@ -23,20 +23,19 @@
                7px 7px #ffcccc,
                8px 8px #ffcccc,
                9px 9px #ccc4c4;
-
 }
 
-/* .information a {
-  margin-top: 2rem;
-}
-
-.information a:first-of-type {
-  margin-top: 0;
-} */
 
 .logo-links {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  box-shadow: 2px 2px 1px 1px #ffcccc,
+              3px 3px 2px 2px #ffcccc,
+              4px 4px 3px 3px #ffcccc,
+              5px 5px 4px 4px #ffcccc; 
+
+
 }
 
 .contact-logo {
@@ -51,6 +50,10 @@
 
 .contact-logo[alt="AngelList"] {
   width: 20px;
+}
+
+.contact-logo[alt="sd-logo"] {
+  width: 37px;
 }
 
 .contact-logo:hover {
