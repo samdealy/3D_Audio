@@ -26,19 +26,17 @@
 
 }
 
-.information a {
+/* .information a {
   margin-top: 2rem;
 }
 
 .information a:first-of-type {
   margin-top: 0;
-}
+} */
 
 .logo-links {
   display: flex;
-  flex-direction: column;
-  width: 28px;
-  align-items: center;
+  justify-content: space-between;
 }
 
 .contact-logo {
