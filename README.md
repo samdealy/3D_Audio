@@ -10,7 +10,7 @@ the Three.js library.
 ## Technology
 The project makes extensive use of the Three.js library's standard functionality.
 
-### 3D text
+### 3D Text
 To render 3D representations of song lyrics to the screen, the `createText(word)` method takes a
 lyric as a parameter and creates a geometry and mesh. This lyric is then given a random position, and added to the scene.
 To create the glowing text effect, a point-light is added directly in front of the lyric.
@@ -77,4 +77,4 @@ To rotate the camera position at each render, `spinCamera` dynamically sets the 
   ```
 
 ### Glitch Pass Effect
-Additionally, the app makes uses of the Three.js composer and its glitch pass to create temporally random visual glitches. Users can turn off the glitch pass by using the `dat.GUI` menu in the top right corner of the page. 
+Additionally, the app makes uses of the Three.js composer and its glitch pass to create temporally random visual glitches. Users can turn off the glitch pass by using the `dat.GUI` menu in the top right corner of the page.
