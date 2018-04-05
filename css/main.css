@@ -1,8 +1,44 @@
 .information {
   position: absolute;
   margin-left: 1rem;
-  opacity: .3;
   font-family: arial;
   display: flex;
   flex-direction: column;
+}
+
+.information h1 {
+  margin: 1rem 0;
+}
+
+.information a {
+  margin-top: 2rem;
+}
+
+.information a:first-of-type {
+  margin-top: 0;
+}
+
+.logo-links {
+  display: flex;
+  flex-direction: column;
+  width: 28px;
+  align-items: center;
+}
+
+.contact-logo {
+  opacity: .3;
+  width: 25px;
+}
+
+.contact-logo[alt="LinkedIn"] {
+  width: 31px;
+  margin-left: 6px;
+}
+
+.contact-logo[alt="AngelList"] {
+  width: 20px;
+}
+
+.contact-logo:hover {
+  opacity: 1;
 }
