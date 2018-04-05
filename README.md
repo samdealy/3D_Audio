@@ -46,7 +46,36 @@ To create the glowing text effect, a point-light is added directly in front of t
   }
   ```
 
+### Dynamic Lyric Rendering
+To dynamically update lyrics, I created a `goWestTiming` object that stores lyric start times as keys and lyric text as values. Every second, the `updateWords` method checks `goWestTiming` object to see if a lyric start time
+corresponds to the current song time. If it does, then the method calls `createText(lyric)`, passing in the new lyric as the parameter.
 
+```javascript
+function updateWords() {
+  currentTime += 1;
+  if (goWestTiming[currentTime]) {
+    currentWord = goWestTiming[currentTime];
+    loadFont(currentWord);
+  }
+}
+```
+
+
+### Camera Effects
+To rotate the camera position at each render, `spinCamera` dynamically sets the camera's position by using the cyclical sine and cosine functions.
+
+  ```javascript
+  function spinCamera(){
+    rotation += 0.01
+    camera.position.y = Math.sin(rotation) * 80;
+    camera.position.x = Math.cos(rotation) * 200;
+
+    const lyrics = scene.getObjectByName('lyrics');
+    if (lyrics) camera.lookAt(lyrics.position);
+    else camera.lookAt(scene.position);
+
+  }
+  ```
 The lyrics update
 as the song progresses.
 
