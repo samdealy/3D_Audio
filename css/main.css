@@ -8,6 +8,22 @@
 
 .information h1 {
   margin: 1rem 0;
+  color: #ffffff;
+  text-shadow:
+               -1px -1px 0 #ccc4c4,
+               1px -1px 0 #ccc4c4,
+               -1px 1px 0 #ccc4c4,
+               1px 1px 0 #ccc4c4,
+               1px 1px #ffcccc,
+               2px 2px #ffcccc,
+               3px 3px #ffcccc,
+               4px 4px #ffcccc,
+               5px 5px #ffcccc,
+               6px 6px #ffcccc,
+               7px 7px #ffcccc,
+               8px 8px #ffcccc,
+               9px 9px #ccc4c4;
+
 }
 
 .information a {
