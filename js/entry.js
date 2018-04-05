@@ -18,7 +18,7 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   //Lights
   const spotLight  = new THREE.SpotLight(0xffffff);
   spotLight.castShadow = false;
-  spotLight.position.set(0,0,200);
+  spotLight.position.set(0, 0, 200);
 
   const pointLight  = new THREE.PointLight(0xffffff, .5);
   pointLight.name   = 'pointLight';
@@ -73,7 +73,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   loadAudio();
 
   //Composer + Passes
-  //Composer + Passes
   const composer = new EffectComposer(renderer);
 
   const renderPass = new RenderPass(scene, camera);
@@ -117,7 +116,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
     else {
       glitchPass.renderToScreen = false;
       renderPass.renderToScreen = true;
-      debugger
     }
   });
 

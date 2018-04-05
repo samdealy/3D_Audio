@@ -47483,7 +47483,6 @@ song.onEnded = function () {
 loadAudio();
 
 //Composer + Passes
-//Composer + Passes
 var composer = new _postprocessing.EffectComposer(renderer);
 
 var renderPass = new _postprocessing.RenderPass(scene, camera);
@@ -47525,7 +47524,6 @@ folder2.add(glitchPass, 'visible').onChange(function (visible) {
   } else {
     glitchPass.renderToScreen = false;
     renderPass.renderToScreen = true;
-    debugger;
   }
 });
 
