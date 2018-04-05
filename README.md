@@ -60,7 +60,6 @@ function updateWords() {
 }
 ```
 
-
 ### Camera Effects
 To rotate the camera position at each render, `spinCamera` dynamically sets the camera's position by using the cyclical sine and cosine functions.
 
@@ -76,8 +75,6 @@ To rotate the camera position at each render, `spinCamera` dynamically sets the 
 
   }
   ```
-The lyrics update
-as the song progresses.
 
-Additionally, the app makes uses of the Three.js composer and its glitch pass to create temporally
-random visual glitches.
+### Glitch Pass Effect
+Additionally, the app makes uses of the Three.js composer and its glitch pass to create temporally random visual glitches. Users can turn off the glitch pass by using the `dat.GUI` menu in the top right corner of the page. 

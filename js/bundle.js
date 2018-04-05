@@ -47497,7 +47497,6 @@ window.glitchPass = glitchPass;
 composer.addPass(glitchPass);
 
 //Dat.gui
-
 var gui = new _dat2.default.GUI();
 var folder1 = gui.addFolder('song');
 folder1.add(song, 'volume', 0, 1).onChange(function (level) {
@@ -47605,7 +47604,6 @@ var goWestTiming = {
 
 function updateWords() {
   currentTime += 1;
-
   if (goWestTiming[currentTime]) {
     currentWord = goWestTiming[currentTime];
     loadFont(currentWord);

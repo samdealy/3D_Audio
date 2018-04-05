@@ -87,7 +87,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
   composer.addPass(glitchPass);
 
   //Dat.gui
-
   const gui = new dat.GUI();
   const folder1 = gui.addFolder('song');
   folder1.add(song, 'volume', 0, 1).onChange( level => {
@@ -195,7 +194,6 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
 
   function updateWords() {
     currentTime += 1;
-
     if (goWestTiming[currentTime]) {
       currentWord = goWestTiming[currentTime];
       loadFont(currentWord);
