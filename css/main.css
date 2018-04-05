@@ -1,4 +1,8 @@
 .information {
   position: absolute;
   margin-left: 1rem;
+  opacity: .3;
+  font-family: arial;
+  display: flex;
+  flex-direction: column;
 }
