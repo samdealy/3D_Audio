@@ -47620,9 +47620,9 @@ function loadFont(currentWord) {
   });
 }
 
-function createText(word) {
+function createText(lyric) {
   removeText();
-  var textGeo = new THREE.TextGeometry(word, {
+  var textGeo = new THREE.TextGeometry(lyric, {
     font: font, size: size, height: height, curveSegments: curveSegments,
     weight: "normal",
     bevelThickness: bevelThickness,

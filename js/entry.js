@@ -210,9 +210,9 @@ let currentTime = 0, currentWord = 'Welcome to 3D karaoke!';
     });
   }
 
-  function createText(word) {
+  function createText(lyric) {
     removeText();
-    const textGeo = new THREE.TextGeometry( word, {
+    const textGeo = new THREE.TextGeometry( lyric, {
       font: font, size: size, height: height, curveSegments:curveSegments,
       weight: "normal",
       bevelThickness:bevelThickness,
