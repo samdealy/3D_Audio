@@ -9,20 +9,19 @@
 .information h1 {
   margin: 1rem 0;
   color: #ffffff;
-  text-shadow:
-               -1px -1px 0 #ccc4c4,
-               1px -1px 0 #ccc4c4,
-               -1px 1px 0 #ccc4c4,
-               1px 1px 0 #ccc4c4,
-               1px 1px #ffcccc,
-               2px 2px #ffcccc,
-               3px 3px #ffcccc,
-               4px 4px #ffcccc,
-               5px 5px #ffcccc,
-               6px 6px #ffcccc,
-               7px 7px #ffcccc,
-               8px 8px #ffcccc,
-               9px 9px #ccc4c4;
+  text-shadow: -1px -1px 0 black,
+                1px -1px 0 black,
+                -1px 1px 0 black,
+                1px 1px 0 black,
+                1px 1px #ffcccc,
+                2px 2px #ffcccc,
+                3px 3px #ffcccc,
+                4px 4px #ffcccc,
+                5px 5px #ffcccc,
+                6px 6px #ffcccc,
+                7px 7px #ffcccc,
+                8px 8px #ffcccc,
+                9px 9px #ccc4c4;
 }
 
 
@@ -33,13 +32,12 @@
   box-shadow: 2px 2px 1px 1px #ffcccc,
               3px 3px 2px 2px #ffcccc,
               4px 4px 3px 3px #ffcccc,
-              5px 5px 4px 4px #ffcccc; 
+              5px 5px 4px 4px #ffcccc;
 
 
 }
 
 .contact-logo {
-  opacity: .3;
   width: 25px;
 }
 
@@ -57,5 +55,5 @@
 }
 
 .contact-logo:hover {
-  opacity: 1;
+  opacity: .3;
 }
